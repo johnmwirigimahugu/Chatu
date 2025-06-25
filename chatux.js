@@ -785,6 +785,55 @@
             }
         };
 
+// 🌐 cx-include: Automatically loads external HTML into an element by kesh
+// 🌐 cx-include: Load external HTML into an element (supports nesting + callback)
+// Usage:
+// <div cx-include="menu.html" cx-oninclude="initSidebar()"></div>
+
+document.addEventListener("DOMContentLoaded", () => {
+  const included = new Set();
+
+  function loadIncludes(scope = document) {
+    const elements = scope.querySelectorAll("[cx-include]");
+    elements.forEach(el => {
+      const file = el.getAttribute("cx-include");
+      const callback = el.getAttribute("cx-oninclude");
+      if (!file) return;
+
+      // Avoid re-including same file
+      if (included.has(el)) return;
+
+      fetch(file)
+        .then(res => {
+          if (!res.ok) throw new Error(`Failed to load ${file}`);
+          return res.text();
+        })
+        .then(html => {
+          el.innerHTML = html;
+          included.add(el);
+
+          // Recursively scan for inner includes
+          loadIncludes(el);
+
+          // If a callback is provided
+          if (callback && typeof window[callback.split("(")[0]] === "function") {
+            try {
+              new Function(callback)();
+            } catch (e) {
+              console.warn("cx-oninclude error:", e);
+            }
+          }
+        })
+        .catch(err => {
+          console.error("cx-include error:", err);
+          el.innerHTML = "<!-- cx-include failed -->";
+        });
+    });
+  }
+
+  loadIncludes();
+});
+/** EOF- End of Framework */
         // Rebind Kesh.flash to cx.dom.flash.add
         window.alert = function(message) { // Replace alert with custom message
             cx.dom.flash.add('info', message);
