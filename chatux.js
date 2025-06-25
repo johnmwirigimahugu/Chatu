@@ -784,7 +784,6 @@
                 }
             }
         };
-
 // 🌐 cx-include: Automatically loads external HTML into an element by kesh
 // 🌐 cx-include: Load external HTML into an element (supports nesting + callback)
 // Usage:
@@ -834,6 +833,18 @@ document.addEventListener("DOMContentLoaded", () => {
   loadIncludes();
 });
 /** EOF- End of Framework */
+/* 🧪 Example Usage
+html
+Copy
+Edit
+<!-- Basic include -->
+<div cx-include="menu.html"></div>
+
+<!-- Include with callback -->
+<div cx-include="sidebar.html" cx-oninclude="initSidebar()"></div>
+
+<!-- Nested example: dashboard.html contains more <div cx-include="..."> inside -->
+<div cx-include="dashboard.html"></div>
         // Rebind Kesh.flash to cx.dom.flash.add
         window.alert = function(message) { // Replace alert with custom message
             cx.dom.flash.add('info', message);
